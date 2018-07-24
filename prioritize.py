@@ -64,6 +64,12 @@ def main():
         print(player1+' (a)'+'                          About the same (s)                          '+player2+' (d)')
         print('')
         print('')
+        print('')
+        print('Progress: ' + str(((count/rounds)*100)) + ' %')
+        print('')
+        print('You have ' + str(rounds-count) + ' rounds remaining.')
+        print('')
+        print('')
         selection = ''
 
         while selection != "a" and selection != "d" and selection != "s":
