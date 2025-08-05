@@ -9,28 +9,28 @@
 # Licence:     GNU General Public License v3.0
 #-------------------------------------------------------------------------------
 
-import random,os
+import random,os,csv
 
-def get_players(file_name):
-    player_file = open(file_name, 'r')
-    print('Name of the file: ', player_file.name)
-
-    p = player_file.readlines()
-    player_file.close
-
-    p_list = [elem.strip().split(',') for elem in p]
-    p_list2 = []
-
-    for sublist in p_list:
-        for element in sublist:
-            p_list2.append(element)
-
-    player_tuple = tuple(p_list2)
-
+def get_players_from_file(file_name):
+    with open(file_name, newline='') as player_file:
+        print('Name of the file: ', player_file.name)
+        reader = csv.reader(player_file)
+        players = []
+        for row in reader:
+            for element in row:
+                element = element.strip()
+                if element:
+                    players.append(element)
     player_dict = {}
-    for player in player_tuple:
+    for player in players:
         player_dict[player] = 1600
+    return player_dict
 
+def get_players_from_input(input_string):
+    players = [elem.strip() for elem in input_string.split(',') if elem.strip()]
+    player_dict = {}
+    for player in players:
+        player_dict[player] = 1600
     return player_dict
 
 
@@ -39,18 +39,24 @@ def main():
     os.system('cls')
     print('Welcome to the ELO simple ranking tool!')
     print('')
-    while True:
-        file_name = input('Please input the name of your file: ')
-        try:
-            player_dict = get_players(file_name)
-        except FileNotFoundError:
-            os.system('cls')
-            print('')
-            print("Oops! The file '" + file_name + "' was not found.  Please try again...")
-            print('')
-        else:
-            break
-    player_dict = get_players(file_name)
+    mode = ''
+    while mode not in ['y','n']:
+        mode = input('Would you like to load players from a CSV file? (y/n): ').lower()
+    if mode == 'y':
+        while True:
+            file_name = input('Please input the name of your file: ')
+            try:
+                player_dict = get_players_from_file(file_name)
+            except FileNotFoundError:
+                os.system('cls')
+                print('')
+                print("Oops! The file '" + file_name + "' was not found.  Please try again...")
+                print('')
+            else:
+                break
+    else:
+        input_string = input('Please enter a comma separated list of items: ')
+        player_dict = get_players_from_input(input_string)
     rounds = ((len(player_dict)*(len(player_dict)-1))/2-3)
     count = 0
     matches = []
